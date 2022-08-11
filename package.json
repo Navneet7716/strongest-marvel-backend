@@ -1,0 +1,30 @@
+{
+  "name": "strong-marv-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "watch": "tsc -w",
+    "dev-build": "nodemon build/index.js",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^4.2.1",
+    "axios": "^0.27.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/node": "^18.7.1",
+    "prisma": "^4.2.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  }
+}
