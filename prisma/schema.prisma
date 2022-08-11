@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Character {
-  id          Int    @unique
+  id          Int    @id @default(autoincrement())
   name        String
   image       String
   VoteFor     Vote[] @relation("votesFor")

@@ -31,18 +31,24 @@ app.get("/data", async (req, res) => {
 
     try {
 
+        let added = 0;
+
         for (let i = 0; i < 8; i++) {
             const data = await axios.get(`https://gateway.marvel.com/v1/public/characters?ts=${process.env.TS}&apikey=${process.env.PUBLIC_KEY}&hash=${process.env.HASH}&limit=100&offset=${i * 100}`);
             for (let char of data.data.data.results) {
-                console.log("ADDED CHARACTER ", char.name);
+
                 let image = char.thumbnail.path + "." + char.thumbnail.extension;
-                await prisma.character.create({
-                    data: {
-                        id: char.id,
-                        name: char.name,
-                        image: image
-                    },
-                });
+                if (!image.includes("image_not_available")) {
+
+                    console.log("ADDED ", char.name, ++added);
+
+                    await prisma.character.create({
+                        data: {
+                            name: char.name,
+                            image: image
+                        },
+                    });
+                }
             }
         }
 
@@ -87,7 +93,7 @@ app.get("/character/:id", async (req, res) => {
 // adding a new Character
 app.post("/addCharacter", async (req, res) => {
     const { id, name, image } = req.body;
-  
+
     try {
         const newCharacter = await prisma.character.create({
             data: {
@@ -127,6 +133,34 @@ app.post("/vote", async (req, res) => {
         console.log(error);
 
         return res.status(400).json({ error: error.toString() });
+    }
+})
+
+app.get("/results", async (req, res) => {
+
+    try {
+        let data = await prisma.character.findMany({
+            orderBy: {
+                VoteFor: { _count: "desc" },
+            },
+            select: {
+                id: true,
+                name: true,
+                image: true,
+                _count: {
+                    select: {
+                        VoteFor: true,
+                        VoteAgainst: true,
+                    },
+                },
+            },
+        });
+        console.log(data);
+        return res.status(200).json({ data });
+    }
+    catch (error) {
+        console.log(error);
+        res.json({ error: error.toString() });
     }
 })
 
